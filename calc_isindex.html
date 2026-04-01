@@ -1,0 +1,276 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-sans);background:var(--color-background-tertiary);min-height:100vh;}
+.topbar{background:#1e2a3a;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:52px;}
+.topbar-left{display:flex;align-items:center;gap:10px;}
+.topbar-icon{width:32px;height:32px;background:#10b981;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.topbar-icon svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;}
+.topbar h1{font-size:16px;font-weight:500;}
+.topbar-tag{font-size:12px;color:#8a9bb0;}
+.layout{display:grid;grid-template-columns:1fr 300px;gap:1rem;padding:1.25rem;align-items:start;}
+.panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:14px;padding:1.25rem;}
+.panel-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:1rem;}
+.section-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--color-text-tertiary);margin:0 0 8px;}
+.input-card{border:0.5px solid var(--color-border-tertiary);border-radius:10px;padding:14px 16px;margin-bottom:10px;background:var(--color-background-secondary);}
+.input-card-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.ic-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.ic-title{font-size:13px;font-weight:500;color:var(--color-text-primary);}
+.ic-desc{font-size:11px;color:var(--color-text-secondary);margin-left:auto;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:var(--color-text-secondary);font-weight:500;}
+.field input{padding:7px 10px;font-size:15px;font-weight:500;border:0.5px solid var(--color-border-secondary);border-radius:8px;background:var(--color-background-primary);color:var(--color-text-primary);width:100%;text-align:center;}
+.field input:focus{outline:none;border-color:#10b981;}
+.impact-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 8px;border-radius:99px;margin-top:2px;}
+.divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:14px 0;}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;}
+.chip{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:10px;padding:10px 12px;text-align:center;}
+.chip-label{font-size:10px;color:var(--color-text-tertiary);margin-bottom:4px;}
+.chip-val{font-size:18px;font-weight:500;}
+.chip-sub{font-size:10px;color:var(--color-text-tertiary);margin-top:2px;}
+.formula-box{background:var(--color-background-secondary);border-radius:10px;padding:12px 14px;margin-top:12px;}
+.formula-title{font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;font-weight:500;}
+.formula-line{font-size:12px;font-family:var(--font-mono);color:var(--color-text-secondary);line-height:1.8;}
+.right-panel{display:flex;flex-direction:column;gap:1rem;}
+.gauge-panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:14px;padding:1.5rem;text-align:center;}
+.gauge-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:1rem;}
+.gauge-wrap{position:relative;width:160px;height:160px;margin:0 auto 1.25rem;}
+.gauge-wrap svg{width:160px;height:160px;}
+.gauge-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;width:110px;}
+.gauge-num{font-size:42px;font-weight:500;line-height:1;}
+.gauge-unit{font-size:13px;color:var(--color-text-secondary);}
+.badge-lg{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;padding:8px 20px;border-radius:99px;border:2px solid;}
+.breakdown-panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:14px;padding:1.25rem;}
+.breakdown-title{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:10px;}
+.brow{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;}
+.brow:last-child{border-bottom:none;}
+.brow-label{color:var(--color-text-secondary);font-family:var(--font-mono);}
+.brow-val{font-weight:500;font-family:var(--font-mono);}
+.brow-total{display:flex;justify-content:space-between;padding:8px 0 0;margin-top:4px;border-top:1.5px solid var(--color-border-secondary);}
+.brow-total-label{font-size:13px;font-weight:500;}
+.brow-total-val{font-size:20px;font-weight:500;}
+.warn{background:#FAEEDA;border:0.5px solid #EF9F27;border-radius:8px;padding:7px 12px;font-size:12px;color:#854F0B;margin-top:10px;display:none;}
+@media(max-width:640px){.layout{grid-template-columns:1fr;}.right-panel{order:-1;}.field-row,.chips{grid-template-columns:1fr 1fr;}}
+</style>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-icon"><svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div>
+    <h1>Calculadora — Índice de Solução (IS)</h1>
+  </div>
+  <span class="topbar-tag">Calculadora não oficial</span>
+</div>
+
+<div class="layout">
+  <div>
+    <div class="panel">
+      <div class="panel-title">Entradas</div>
+
+      <p class="section-label">Respostas dos consumidores</p>
+
+      <div class="input-card">
+        <div class="input-card-header">
+          <div class="ic-dot" style="background:#3B6D11;"></div>
+          <span class="ic-title">Responderam Sim</span>
+          <span class="ic-desc">Problema resolvido</span>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Quantidade</label><input type="number" id="sim" min="0" value="420" oninput="update()"></div>
+          <div style="display:flex;align-items:center;justify-content:center;">
+            <div>
+              <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:4px;">Impacto no IS</div>
+              <span class="impact-tag" style="background:#EAF3DE;color:#3B6D11;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                Aumenta o índice
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-card">
+        <div class="input-card-header">
+          <div class="ic-dot" style="background:#A32D2D;"></div>
+          <span class="ic-title">Responderam Não</span>
+          <span class="ic-desc">Problema não resolvido</span>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Quantidade</label><input type="number" id="nao" min="0" value="180" oninput="update()"></div>
+          <div style="display:flex;align-items:center;justify-content:center;">
+            <div>
+              <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:4px;">Impacto no IS</div>
+              <span class="impact-tag" style="background:#FCEBEB;color:#A32D2D;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                Diminui o índice
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <p class="section-label">Moderações</p>
+
+      <div class="input-card">
+        <div class="input-card-header">
+          <div class="ic-dot" style="background:#185FA5;"></div>
+          <span class="ic-title">Moderação aceita</span>
+          <span class="ic-desc">Remove o "Não" do cálculo</span>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Quantidade aceitas</label><input type="number" id="mod-aceita" min="0" value="30" oninput="update()"></div>
+          <div style="display:flex;align-items:center;justify-content:center;">
+            <div>
+              <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:4px;">Efeito</div>
+              <span class="impact-tag" style="background:#E6F1FB;color:#185FA5;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                IS melhora
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-card">
+        <div class="input-card-header">
+          <div class="ic-dot" style="background:#993C1D;"></div>
+          <span class="ic-title">Moderação não aceita</span>
+          <span class="ic-desc">Remove um "Sim" do cálculo</span>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Quantidade não aceitas</label><input type="number" id="mod-naceita" min="0" value="10" oninput="update()"></div>
+          <div style="display:flex;align-items:center;justify-content:center;">
+            <div>
+              <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:4px;">Efeito</div>
+              <span class="impact-tag" style="background:#FAECE7;color:#993C1D;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                IS piora
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="warn-box" class="warn"></div>
+
+      <div class="chips">
+        <div class="chip">
+          <div class="chip-label">Sim efetivos</div>
+          <div class="chip-val" id="chip-sim" style="color:#3B6D11;">410</div>
+          <div class="chip-sub">numerador</div>
+        </div>
+        <div class="chip">
+          <div class="chip-label">Não efetivos</div>
+          <div class="chip-val" id="chip-nao-ef" style="color:#A32D2D;">150</div>
+          <div class="chip-sub">após mod. aceitas</div>
+        </div>
+        <div class="chip">
+          <div class="chip-label">Denominador</div>
+          <div class="chip-val" id="chip-den" style="color:var(--color-text-primary);">560</div>
+          <div class="chip-sub">Sim ef. + Não ef.</div>
+        </div>
+      </div>
+
+      <div class="formula-box">
+        <div class="formula-title">Fórmula aplicada</div>
+        <div class="formula-line">IS = Sim efetivos ÷ (Sim efetivos + Não efetivos)</div>
+        <div class="formula-line" id="formula-calc">IS = 410 ÷ (410 + 150) = 73.2%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="gauge-panel">
+      <div class="gauge-label">Índice de Solução (IS)</div>
+      <div class="gauge-wrap">
+        <svg viewBox="0 0 160 160">
+          <circle cx="80" cy="80" r="66" fill="none" stroke="#e5e7eb" stroke-width="10"/>
+          <circle id="gauge-arc" cx="80" cy="80" r="66" fill="none" stroke="#10b981" stroke-width="10"
+            stroke-linecap="round" stroke-dasharray="414.69" stroke-dashoffset="414.69"
+            transform="rotate(-90 80 80)" style="transition:stroke-dashoffset .5s ease,stroke .5s ease;"/>
+        </svg>
+        <div class="gauge-center">
+          <div class="gauge-num" id="gauge-num" style="color:#10b981;">—</div>
+          <div class="gauge-unit">%</div>
+        </div>
+      </div>
+      <div>
+        <div class="badge-lg" id="badge-lg" style="color:#3B6D11;border-color:#3B6D11;background:#EAF3DE;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          —
+        </div>
+      </div>
+    </div>
+
+    <div class="breakdown-panel">
+      <div class="breakdown-title">Detalhamento</div>
+      <div class="brow"><span class="brow-label">Sim (bruto)</span><span class="brow-val" id="br-sim" style="color:#3B6D11;"></span></div>
+      <div class="brow"><span class="brow-label">Mod. não aceitas (−Sim)</span><span class="brow-val" id="br-mna" style="color:#993C1D;"></span></div>
+      <div class="brow"><span class="brow-label">Sim efetivos</span><span class="brow-val" id="br-sim-ef" style="color:#3B6D11;"></span></div>
+      <div class="brow" style="margin-top:4px;"><span class="brow-label">Não (bruto)</span><span class="brow-val" id="br-nao"></span></div>
+      <div class="brow"><span class="brow-label">Mod. aceitas (−Não)</span><span class="brow-val" id="br-ma" style="color:#185FA5;"></span></div>
+      <div class="brow"><span class="brow-label">Não efetivos</span><span class="brow-val" id="br-nef" style="color:#A32D2D;"></span></div>
+      <div class="brow-total">
+        <span class="brow-total-label">IS final</span>
+        <span class="brow-total-val" id="br-total">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CIRC=2*Math.PI*66;
+const gi=id=>parseInt(document.getElementById(id).value)||0;
+const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+
+function update(){
+  const sim=gi('sim');
+  const nao=gi('nao');
+  const modA=gi('mod-aceita');
+  const modNA=gi('mod-naceita');
+
+  const warns=[];
+  if(modA>nao) warns.push('Moderações aceitas não podem exceder o total de "Não".');
+  if(modNA>sim) warns.push('Moderações não aceitas não podem exceder o total de "Sim".');
+  const wb=document.getElementById('warn-box');
+  wb.style.display=warns.length?'block':'none';
+  wb.textContent=warns.join(' ');
+
+  const modAef=Math.min(modA, nao);
+  const modNAef=Math.min(modNA, sim);
+
+  const simEf=Math.max(0, sim - modNAef);
+  const naoEf=Math.max(0, nao - modAef);
+  const den=simEf+naoEf;
+  const is_=den>0?(simEf/den)*100:0;
+  const isStr=is_.toFixed(1);
+
+  const color=is_>=75?'#3B6D11':is_>=50?'#1D9E75':is_>=30?'#BA7517':'#A32D2D';
+  const bg=   is_>=75?'#EAF3DE':is_>=50?'#E1F5EE':is_>=30?'#FAEEDA':'#FCEBEB';
+  const label=is_>=75?'Ótimo':is_>=50?'Bom':is_>=30?'Regular':'Precisa melhorar';
+
+  document.getElementById('gauge-arc').style.strokeDashoffset=CIRC*(1-is_/100);
+  document.getElementById('gauge-arc').style.stroke=color;
+  s('gauge-num', isStr);
+  document.getElementById('gauge-num').style.color=color;
+
+  const bl=document.getElementById('badge-lg');
+  bl.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>${label}`;
+  bl.style.color=color; bl.style.borderColor=color; bl.style.background=bg;
+
+  s('chip-sim',    simEf.toLocaleString('pt-BR'));
+  s('chip-nao-ef', naoEf.toLocaleString('pt-BR'));
+  s('chip-den',    den.toLocaleString('pt-BR'));
+  s('formula-calc',`IS = ${simEf} ÷ (${simEf} + ${naoEf}) = ${isStr}%`);
+
+  s('br-sim',    sim.toLocaleString('pt-BR'));
+  s('br-mna',   '−'+modNAef.toLocaleString('pt-BR'));
+  s('br-sim-ef', simEf.toLocaleString('pt-BR'));
+  s('br-nao',    nao.toLocaleString('pt-BR'));
+  s('br-ma',    '−'+modAef.toLocaleString('pt-BR'));
+  s('br-nef',    naoEf.toLocaleString('pt-BR'));
+  s('br-total',  isStr+'%');
+  document.getElementById('br-total').style.color=color;
+}
+update();
+</script>
